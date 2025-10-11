@@ -8,7 +8,12 @@ from io import BytesIO
 from openpyxl import load_workbook
 
 # === KONFIGURASI DASAR ===
-st.set_page_config(page_title="Input Invoice Penjualan KSMT", page_icon="🌾", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(
+    page_title="Input Invoice Penjualan KSMT",
+    page_icon="🌾",
+    layout="wide",
+    initial_sidebar_state="collapsed"
+)
 
 # === GAYA TAMPAK DEPAN ===
 st.markdown("""
@@ -30,7 +35,7 @@ st.markdown("<div class='title'>Input Invoice Penjualan KSMT</div>", unsafe_allo
 st.markdown("<div class='sub'>Ekstrak data otomatis dari foto invoice ke Excel Template</div>", unsafe_allow_html=True)
 
 # === INPUT FILE ===
-uploaded_file = st.file_uploader("Upload file RAR berisi foto invoice (.rar)", type=["rar"])
+uploaded_file = st.file_uploader("Upload file ZIP berisi foto invoice (.zip)", type=["zip"])
 
 # === OCR Function ===
 def extract_text_from_image(img_bytes):
@@ -47,19 +52,20 @@ def extract_text_from_image(img_bytes):
 # === EKSEKUSI ===
 if uploaded_file is not None:
     with tempfile.TemporaryDirectory() as tmpdir:
-        rar_path = os.path.join(tmpdir, uploaded_file.name)
-        with open(rar_path, "wb") as f:
+        zip_path = os.path.join(tmpdir, uploaded_file.name)
+        with open(zip_path, "wb") as f:
             f.write(uploaded_file.getbuffer())
 
-        # Ekstrak file RAR (jika error, beri tahu user)
+        # Ekstrak file ZIP
         try:
-            import patoolib
-            patoolib.extract_archive(rar_path, outdir=tmpdir)
+            with zipfile.ZipFile(zip_path, "r") as zip_ref:
+                zip_ref.extractall(tmpdir)
+            st.success("📦 File ZIP berhasil diekstrak!")
         except Exception as e:
-            st.error("❌ Gagal mengekstrak file RAR. Pastikan format benar.")
+            st.error(f"❌ Gagal mengekstrak ZIP: {e}")
             st.stop()
 
-        st.success("📸 File berhasil diekstrak! Sedang membaca invoice...")
+        st.info("📸 Membaca gambar invoice dan menjalankan OCR...")
 
         all_texts = []
         for root, _, files in os.walk(tmpdir):
@@ -69,9 +75,9 @@ if uploaded_file is not None:
                         text = extract_text_from_image(img)
                         all_texts.append(text)
 
-        st.info(f"✅ Berhasil membaca {len(all_texts)} gambar invoice.")
+        st.success(f"✅ Berhasil membaca {len(all_texts)} gambar invoice!")
 
-        # --- Contoh logika sederhana ---
+        # --- Simulasi hasil olahan ---
         data = {
             "Nama": ["Beras Ladang Padi", "Ketan Pesona Laut", "Katul", "Sekam Giling"],
             "Kemasan": ["25", "-", "-", "-"],
@@ -81,7 +87,7 @@ if uploaded_file is not None:
         }
         df = pd.DataFrame(data)
 
-        st.subheader("📋 Hasil Rekap Otomatis (contoh hasil simulasi)")
+        st.subheader("📋 Hasil Rekap Otomatis (Contoh Data Simulasi)")
         st.dataframe(df)
 
         # === LOAD TEMPLATE & TULIS DATA ===
