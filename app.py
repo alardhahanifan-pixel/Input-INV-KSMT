@@ -52,6 +52,9 @@ if uploaded_zip is not None:
         with zipfile.ZipFile(zip_path, "r") as zip_ref:
             zip_ref.extractall(temp_dir)
 
+import pytesseract
+pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+
         st.success("✅ File ZIP berhasil diekstrak. Mulai proses OCR...")
 
         # ====== PROSES OCR UNTUK SETIAP GAMBAR ======
