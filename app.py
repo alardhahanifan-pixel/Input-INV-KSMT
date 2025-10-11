@@ -67,4 +67,5 @@ if uploaded_zip is not None:
 
         # Tampilkan hasil di Streamlit
         df = pd.DataFrame(extracted_data)
-        st.write("### 🧾 Hasil Eks
+        st.write("### 🧾 Hasil Ekstraksi dari Semua Gambar")
+
