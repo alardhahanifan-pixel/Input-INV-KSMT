@@ -37,17 +37,37 @@ st.markdown("<div class='sub'>Ekstrak data otomatis dari foto invoice ke Excel T
 # === INPUT FILE ===
 uploaded_file = st.file_uploader("Upload file ZIP berisi foto invoice (.zip)", type=["zip"])
 
-# === OCR Function ===
-def extract_text_from_image(img_bytes):
-    api_key = "helloworld"  # versi gratis
-    url_api = "https://api.ocr.space/parse/image"
-    response = requests.post(
-        url_api,
-        files={"filename": img_bytes},
-        data={"apikey": api_key, "language": "eng"}
-    )
-    result = response.json()
-    return result.get("ParsedResults", [{}])[0].get("ParsedText", "")
+# === EXTRACT TEXT FROM IMAGE ===
+def extract_text_from_image(image_bytes):
+    """Ekstraksi teks dari gambar menggunakan OCR.space"""
+    url = "https://api.ocr.space/parse/image"
+    payload = {
+        "apikey": "helloworld",  # ganti dengan API key kamu jika punya
+        "language": "ind",
+    }
+    files = {"file": image_bytes}
+    response = requests.post(url, files=files, data=payload)
+    
+    try:
+        result = response.json()
+    except Exception as e:
+        st.error(f"Gagal membaca hasil dari OCR.space: {e}")
+        return ""
+    
+    # cek error dari API
+    if result.get("IsErroredOnProcessing"):
+        st.warning(f"❌ OCR gagal memproses gambar: {result.get('ErrorMessage', 'Tidak diketahui')}")
+        return ""
+    
+    parsed_results = result.get("ParsedResults")
+    if not parsed_results:
+        st.warning("❌ Tidak ada teks yang berhasil diekstrak dari gambar ini.")
+        st.text_area("Respon OCR:", json.dumps(result, indent=2))
+        return ""
+    
+    # ambil teks
+    return parsed_results[0].get("ParsedText", "")
+
 
 # === EKSEKUSI ===
 if uploaded_file is not None:
