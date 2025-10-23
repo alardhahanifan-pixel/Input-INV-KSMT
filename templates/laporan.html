@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}Laporan Penjualan - Aplikasi Input Penjualan{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-chart-bar me-2"></i>Laporan Penjualan</h2>
+    <a href="{{ url_for('daftar_penjualan') }}" class="btn btn-primary">
+        <i class="fas fa-list me-2"></i>Lihat Data Lengkap
+    </a>
+</div>
+
+<!-- Statistik Cards -->
+<div class="row mb-4">
+    <div class="col-md-6 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-shopping-cart fa-3x text-primary mb-3"></i>
+                <h3 class="card-title">{{ total_penjualan }}</h3>
+                <p class="card-text">Total Transaksi Penjualan</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-money-bill-wave fa-3x text-success mb-3"></i>
+                <h3 class="card-title">Rp {{ "{:,.0f}".format(total_pendapatan) }}</h3>
+                <p class="card-text">Total Pendapatan</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Grafik Penjualan per Bulan -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Penjualan per Bulan</h5>
+            </div>
+            <div class="card-body">
+                {% if penjualan_per_bulan %}
+                <canvas id="penjualanChart" width="400" height="200"></canvas>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">Belum ada data untuk ditampilkan</h5>
+                    <p class="text-muted">Mulai dengan menambahkan data penjualan untuk melihat grafik.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabel Rincian per Bulan -->
+{% if penjualan_per_bulan %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-table me-2"></i>Rincian Penjualan per Bulan</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Bulan</th>
+                                <th>Total Penjualan</th>
+                                <th>Persentase</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in penjualan_per_bulan %}
+                            <tr>
+                                <td>{{ data.bulan }}</td>
+                                <td><strong>Rp {{ "{:,.0f}".format(data.total) }}</strong></td>
+                                <td>
+                                    <div class="progress" style="height: 20px;">
+                                        <div class="progress-bar" role="progressbar" 
+                                             style="width: {{ (data.total / total_pendapatan * 100) if total_pendapatan > 0 else 0 }}%">
+                                            {{ "%.1f"|format((data.total / total_pendapatan * 100) if total_pendapatan > 0 else 0) }}%
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{% if penjualan_per_bulan %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Data untuk chart
+    const chartData = {
+        labels: [{% for data in penjualan_per_bulan %}'{{ data.bulan }}'{% if not loop.last %},{% endif %}{% endfor %}],
+        datasets: [{
+            label: 'Total Penjualan (Rp)',
+            data: [{% for data in penjualan_per_bulan %}{{ data.total }}{% if not loop.last %},{% endif %}{% endfor %}],
+            backgroundColor: 'rgba(102, 126, 234, 0.2)',
+            borderColor: 'rgba(102, 126, 234, 1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4
+        }]
+    };
+
+    // Konfigurasi chart
+    const config = {
+        type: 'line',
+        data: chartData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return 'Total: Rp ' + context.parsed.y.toLocaleString('id-ID');
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return 'Rp ' + value.toLocaleString('id-ID');
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    // Buat chart
+    const ctx = document.getElementById('penjualanChart').getContext('2d');
+    new Chart(ctx, config);
+</script>
+{% endif %}
+{% endblock %}

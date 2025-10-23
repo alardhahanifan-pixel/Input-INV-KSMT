@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  penjualan-app:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./instance:/app/instance
+      - ./backups:/app/backups
+    environment:
+      - FLASK_ENV=production
+      - HOST=0.0.0.0
+      - PORT=8080
+    restart: unless-stopped

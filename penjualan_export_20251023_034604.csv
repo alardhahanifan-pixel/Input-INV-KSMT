@@ -1,0 +1,11 @@
+ID,Tanggal,Nama Pelanggan,Alamat,No Telepon,Nama Produk,Jumlah,Harga Satuan,Total Harga,Metode Pembayaran,Keterangan
+1,2025-10-22,Ahmad Wijaya,Jl. Merdeka No. 123, Jakarta,081234567890,Beras Premium 5kg,2,45000.0,90000.0,Transfer Bank,Pembayaran lunas
+2,2025-10-21,Siti Nurhaliza,Jl. Sudirman No. 456, Bandung,081234567891,Minyak Goreng 1L,5,15000.0,75000.0,Tunai,Pelanggan tetap
+3,2025-10-20,Budi Santoso,Jl. Gatot Subroto No. 789, Surabaya,081234567892,Gula Pasir 1kg,10,12000.0,120000.0,E-Wallet,Bulk order
+4,2025-10-19,Dewi Sartika,Jl. Thamrin No. 321, Medan,081234567893,Telur Ayam 1kg,3,25000.0,75000.0,Kartu Debit,Order pagi
+5,2025-10-18,Rudi Hartono,Jl. Diponegoro No. 654, Yogyakarta,081234567894,Susu UHT 1L,4,18000.0,72000.0,Transfer Bank,Order keluarga
+6,2025-10-22,Ahmad Wijaya,Jl. Merdeka No. 123, Jakarta,081234567890,Beras Premium 5kg,2,45000.0,90000.0,Transfer Bank,Pembayaran lunas
+7,2025-10-21,Siti Nurhaliza,Jl. Sudirman No. 456, Bandung,081234567891,Minyak Goreng 1L,5,15000.0,75000.0,Tunai,Pelanggan tetap
+8,2025-10-20,Budi Santoso,Jl. Gatot Subroto No. 789, Surabaya,081234567892,Gula Pasir 1kg,10,12000.0,120000.0,E-Wallet,Bulk order
+9,2025-10-19,Dewi Sartika,Jl. Thamrin No. 321, Medan,081234567893,Telur Ayam 1kg,3,25000.0,75000.0,Kartu Debit,Order pagi
+10,2025-10-18,Rudi Hartono,Jl. Diponegoro No. 654, Yogyakarta,081234567894,Susu UHT 1L,4,18000.0,72000.0,Transfer Bank,Order keluarga
