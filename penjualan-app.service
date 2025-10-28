@@ -1,0 +1,15 @@
+[Unit]
+Description=Aplikasi Input Penjualan
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/workspace
+Environment=PATH=/usr/bin:/usr/local/bin
+ExecStart=/usr/bin/python3 /workspace/app.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

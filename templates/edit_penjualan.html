@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Penjualan - Aplikasi Input Penjualan{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="fas fa-edit me-2"></i>Edit Data Penjualan</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('edit_penjualan', id=penjualan.id) }}">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="tanggal" class="form-label">Tanggal Penjualan <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="tanggal" name="tanggal" 
+                                   value="{{ penjualan.tanggal.strftime('%Y-%m-%d') }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="metode_pembayaran" class="form-label">Metode Pembayaran</label>
+                            <select class="form-control" id="metode_pembayaran" name="metode_pembayaran">
+                                <option value="">Pilih Metode Pembayaran</option>
+                                <option value="Tunai" {% if penjualan.metode_pembayaran == 'Tunai' %}selected{% endif %}>Tunai</option>
+                                <option value="Transfer Bank" {% if penjualan.metode_pembayaran == 'Transfer Bank' %}selected{% endif %}>Transfer Bank</option>
+                                <option value="Kartu Kredit" {% if penjualan.metode_pembayaran == 'Kartu Kredit' %}selected{% endif %}>Kartu Kredit</option>
+                                <option value="Kartu Debit" {% if penjualan.metode_pembayaran == 'Kartu Debit' %}selected{% endif %}>Kartu Debit</option>
+                                <option value="E-Wallet" {% if penjualan.metode_pembayaran == 'E-Wallet' %}selected{% endif %}>E-Wallet</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+                    <h5 class="text-primary"><i class="fas fa-user me-2"></i>Data Pelanggan</h5>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="nama_pelanggan" class="form-label">Nama Pelanggan <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="nama_pelanggan" name="nama_pelanggan" 
+                                   value="{{ penjualan.nama_pelanggan }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="no_telepon" class="form-label">No. Telepon</label>
+                            <input type="tel" class="form-control" id="no_telepon" name="no_telepon" 
+                                   value="{{ penjualan.no_telepon or '' }}">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="alamat_pelanggan" class="form-label">Alamat Pelanggan</label>
+                        <textarea class="form-control" id="alamat_pelanggan" name="alamat_pelanggan" rows="3">{{ penjualan.alamat_pelanggan or '' }}</textarea>
+                    </div>
+
+                    <hr class="my-4">
+                    <h5 class="text-primary"><i class="fas fa-box me-2"></i>Data Produk</h5>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="nama_produk" class="form-label">Nama Produk <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="nama_produk" name="nama_produk" 
+                                   value="{{ penjualan.nama_produk }}" required>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="jumlah" class="form-label">Jumlah <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="jumlah" name="jumlah" 
+                                   value="{{ penjualan.jumlah }}" min="1" required>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="harga_satuan" class="form-label">Harga Satuan <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="harga_satuan" name="harga_satuan" 
+                                   value="{{ penjualan.harga_satuan }}" step="0.01" min="0" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="total_harga" class="form-label">Total Harga <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="total_harga" name="total_harga" 
+                                   value="{{ penjualan.total_harga }}" step="0.01" min="0" required>
+                            <div class="form-text">Total harga akan dihitung otomatis</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="keterangan" class="form-label">Keterangan</label>
+                        <textarea class="form-control" id="keterangan" name="keterangan" rows="3" 
+                                  placeholder="Catatan tambahan (opsional)">{{ penjualan.keterangan or '' }}</textarea>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('daftar_penjualan') }}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-arrow-left me-2"></i>Kembali
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Update Penjualan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Auto-calculate total price
+    function calculateTotal() {
+        const jumlah = parseFloat(document.getElementById('jumlah').value) || 0;
+        const hargaSatuan = parseFloat(document.getElementById('harga_satuan').value) || 0;
+        const total = jumlah * hargaSatuan;
+        document.getElementById('total_harga').value = total.toFixed(2);
+    }
+
+    // Add event listeners
+    document.getElementById('jumlah').addEventListener('input', calculateTotal);
+    document.getElementById('harga_satuan').addEventListener('input', calculateTotal);
+</script>
+{% endblock %}
